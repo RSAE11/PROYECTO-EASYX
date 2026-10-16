@@ -7,7 +7,6 @@ y deja lista una conexión para usarla desde otros archivos.
 import sqlite3
 import os
 
-# La carpeta "data" vive en la raíz del proyecto, un nivel arriba de "app"
 RAIZ_PROYECTO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CARPETA_DATOS = os.path.join(RAIZ_PROYECTO, "data")
 RUTA_BASE_DATOS = os.path.join(CARPETA_DATOS, "comanda.db")
@@ -34,12 +33,18 @@ CREATE TABLE IF NOT EXISTS mesas (
 );
 
 CREATE TABLE IF NOT EXISTS pedidos (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    mesa_id         INTEGER NOT NULL REFERENCES mesas(id),
-    mesero          TEXT,
-    estado          TEXT NOT NULL DEFAULT 'abierto'
-                    CHECK (estado IN ('abierto', 'en_cocina', 'listo', 'entregado', 'pagado', 'cancelado')),
-    creado_en       TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    mesa_id             INTEGER REFERENCES mesas(id),
+    mesero              TEXT,
+    cliente             TEXT,
+    estado              TEXT NOT NULL DEFAULT 'abierto'
+                        CHECK (estado IN ('abierto', 'en_cocina', 'listo', 'entregado', 'pagado', 'cancelado')),
+    para_llevar         INTEGER NOT NULL DEFAULT 0,
+    a_domicilio         INTEGER NOT NULL DEFAULT 0,
+    observaciones       TEXT,
+    descuento_centavos  INTEGER NOT NULL DEFAULT 0,
+    servicio_centavos   INTEGER NOT NULL DEFAULT 0,
+    creado_en           TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS detalle_pedido (
@@ -48,7 +53,8 @@ CREATE TABLE IF NOT EXISTS detalle_pedido (
     producto_id               INTEGER NOT NULL REFERENCES productos(id),
     cantidad                  INTEGER NOT NULL CHECK (cantidad > 0),
     precio_unitario_centavos  INTEGER NOT NULL CHECK (precio_unitario_centavos >= 0),
-    notas                     TEXT
+    notas                     TEXT,
+    impresa                   INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS pagos (

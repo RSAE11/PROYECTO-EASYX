@@ -1,4 +1,4 @@
-# Proyecto EASYX
+# Comanda Jozoca
 
 Aplicación de escritorio para restaurante, hecha en Python.
 
